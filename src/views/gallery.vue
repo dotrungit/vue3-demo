@@ -1,5 +1,5 @@
 <template>
-  <div class="mb-4 container mx-auto">
+  <div class="mb-4 mt-2 container mx-auto">
     <label class="block text-gray-700 text-sm font-bold mb-2" for="Column">
       Columns
     </label>
@@ -26,7 +26,7 @@
   <div class="mb-4 container mx-auto">
     <button
       v-if="!creating"
-      class="bg-blue-500 hover:bg-blue-700 text-white font-bold px-2 py-1 rounded"
+      class="bg-blue-400 hover:bg-blue-700 text-white font-bold px-2 py-1 rounded"
       @click="creating = true"
     >
       Add Image
@@ -45,7 +45,7 @@
         placeholder="Src"
       />
       <button
-        class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 ml-2 rounded focus:outline-none focus:shadow-outline"
+        class="bg-blue-400 hover:bg-blue-700 text-white font-bold py-2 px-4 ml-2 rounded focus:outline-none focus:shadow-outline"
         type="button"
         @click.stop="addNew"
       >
@@ -65,20 +65,20 @@
       <img class="w-full object-cover" :src="item.src" :alt="item.title" />
       <button
         v-if="index > 0"
-        class="bg-blue-500 hover:bg-blue-700 text-white font-bold p-1 rounded absolute bottom-0 left-0"
+        class="bg-blue-400 hover:bg-blue-700 text-white font-bold p-1 rounded absolute bottom-0 left-0"
         @click.stop="changeIndexItemToBack(index)"
       >
         {{ '<<' }}
       </button>
       <button
         v-if="index !== items.length - 1"
-        class="bg-blue-500 hover:bg-blue-700 text-white font-bold p-1 rounded absolute bottom-0 right-0"
+        class="bg-blue-400 hover:bg-blue-700 text-white font-bold p-1 rounded absolute bottom-0 right-0"
         @click.stop="changeIndexItemToNext(index)"
       >
         {{ '>>' }}
       </button>
       <button
-        class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-1 px-2 rounded absolute top-0 right-0"
+        class="bg-blue-400 hover:bg-blue-700 text-white font-bold py-1 px-2 rounded absolute top-0 right-0"
         @click.stop="deleteImage(index)"
       >
         {{ 'x' }}
@@ -141,7 +141,7 @@
   ]
 
   export default defineComponent({
-    name: 'Home',
+    name: 'Gallery',
     setup() {
       return {}
     },
