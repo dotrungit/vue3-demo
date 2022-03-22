@@ -4,7 +4,7 @@
       ref="form"
       @submit.prevent="submit"
       action="POST"
-      class="container mx-auto w-2/3 form bg-white p-6 relative font-sans border bg-gray-200"
+      class="container mx-auto md:w-2/3 form bg-white p-6 relative font-sans border bg-gray-200"
     >
       <h3 class="text-2xl text-gray-900 font-semibold">Register</h3>
       <p class="text-gray-600">Register demo form</p>

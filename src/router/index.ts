@@ -1,6 +1,7 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import Gallery from '../views/gallery.vue'
 import Contact from '../views/contact.vue'
+import Swiper from '../views/swiper.vue'
 
 const routes = [
   {
@@ -12,6 +13,11 @@ const routes = [
     path: '/contact',
     name: 'Contact',
     component: Contact,
+  },
+  {
+    path: '/swiper',
+    name: 'Swiper',
+    component: Swiper,
   },
 ]
 
