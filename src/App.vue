@@ -26,6 +26,16 @@
           :to="{ name: 'Swiper' }"
           >Swiper</router-link
         >
+        <router-link
+          class="block mt-4 lg:inline-block lg:mt-0 text-white hover:text-white mr-4"
+          :to="{ name: 'Config' }"
+          >Config</router-link
+        >
+        <router-link
+          class="block mt-4 lg:inline-block lg:mt-0 text-white hover:text-white mr-4"
+          :to="{ name: 'Product' }"
+          >Product</router-link
+        >
       </div>
     </div>
   </nav>

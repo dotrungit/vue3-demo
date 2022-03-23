@@ -1,137 +1,272 @@
 <template>
-  <div class="bg-blue-200 bg-opacity-50 w-screen h-screen p-10">
-    <form
-      ref="form"
-      @submit.prevent="submit"
-      action="POST"
-      class="container mx-auto md:w-2/3 form bg-white p-6 relative font-sans border bg-gray-200"
+  <div class="flex">
+    <div
+      class="p-4 w-1/3 bg-white rounded-lg border shadow-md sm:p-8 dark:bg-gray-800 dark:border-gray-700"
     >
-      <h3 class="text-2xl text-gray-900 font-semibold">Register</h3>
-      <p class="text-gray-600">Register demo form</p>
-
-      <div class="flex flex-wrap justify-between mt-5">
-        <div
-          v-for="(field, i) in fields"
-          :key="`form-item-${i}`"
-          class="mb-6 md:mb-0 mt-5 relative"
-          :class="getClassField(field.type)"
+      <div class="flex justify-between items-center mb-4">
+        <h5
+          class="text-xl font-bold leading-none text-gray-900 dark:text-white"
         >
-          <label
-            class="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2"
+          Configs Form
+        </h5>
+      </div>
+      <div class="flow-root">
+        <ul role="list" class="divide-y divide-gray-200 dark:divide-gray-700">
+          <li
+            v-for="(field, index) in fields"
+            :key="`field-${index}`"
+            class="py-3 sm:py-4"
           >
-            {{ field.title }}
-            <span v-if="field.required" class="text-red-500">&nbsp;*</span>
-          </label>
-          <template v-if="field.type === 'text'">
-            <input
-              v-model="values[field.name]"
-              class="appearance-none block w-full bg-grey-lighter text-grey-darker border border-grey-lighter rounded py-1 px-2 focus:outline-none"
-              type="text"
-              :name="field.name"
-              :placeholder="field.placeholder"
-              @input="checkValidate(field)"
-            />
-          </template>
-
-          <template v-if="field.type === 'select'">
-            <select
-              v-model="values[field.name]"
-              :name="field.name"
-              class="appearance-none block w-full bg-grey-lighter text-grey-darker border border-grey-lighter rounded py-1 px-2 focus:outline-none focus:outline-none"
-              @change="checkValidate(field)"
-            >
-              <option
-                v-for="option in field.options"
-                :value="option.value"
-                :key="option.value"
+            <div class="flex items-center space-x-4">
+              <div class="flex-shrink-0">
+                {{ index + 1 }}
+              </div>
+              <div class="flex-1 min-w-0">
+                <p
+                  class="text-sm uppercase font-medium text-gray-900 truncate dark:text-white"
+                >
+                  {{ field.name }}
+                </p>
+                <div class="flex flex-wrap">
+                  <div
+                    v-for="(item, key, i) in field"
+                    :key="`item-${i}`"
+                    class="w-2/4 text-sm text-gray-500 truncate dark:text-gray-400"
+                  >
+                    {{ key }} : {{ item }}
+                  </div>
+                </div>
+              </div>
+              <div
+                class="inline-flex items-center text-base font-semibold text-gray-900 dark:text-white"
               >
-                {{ option.label }}
-              </option>
-            </select>
-            <div
-              class="pointer-events-none absolute top-8 right-0 flex items-center px-2 text-gray-700"
-            >
-              <font-awesome-icon icon="caret-down" />
+                <button
+                  type="button"
+                  class="text-green-700 hover:text-white border border-green-700 hover:bg-green-800 focus:ring-4 focus:outline-none focus:ring-green-300 font-medium rounded-lg text-sm px-2 py-2 text-center mr-2 mb-2 dark:border-green-500 dark:text-green-500 dark:hover:text-white dark:hover:bg-green-600 dark:focus:ring-green-800"
+                  @click="openCreate(index)"
+                >
+                  <svg
+                    class="w-4 h-4"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M12 6v6m0 0v6m0-6h6m-6 0H6"
+                    ></path>
+                  </svg>
+                </button>
+                <button
+                  type="button"
+                  class="text-red-700 hover:text-white border border-red-700 hover:bg-red-800 focus:ring-4 focus:outline-none focus:ring-red-300 font-medium rounded-lg text-sm px-2 py-2 text-center mr-2 mb-2 dark:border-red-500 dark:text-red-500 dark:hover:text-white dark:hover:bg-red-600 dark:focus:ring-red-900"
+                  @click="deleteField(index)"
+                >
+                  <svg
+                    class="w-4 h-4"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
+                    ></path>
+                  </svg>
+                </button>
+              </div>
             </div>
-          </template>
+          </li>
+        </ul>
+      </div>
+    </div>
+    <div class="w-2/4 pt-10">
+      <contact :fields="fields"></contact>
+    </div>
+  </div>
+  <modal :show="creating" :show-button-modal="false" @close="creating = false">
+    <div class="p-6">
+      <div class="mb-6">
+        <label
+          for="type"
+          class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-300"
+          >Type</label
+        >
 
-          <template v-if="field.type === 'checkbox'">
-            <div
-              v-for="(option, index) in field.options"
-              :key="`checkbox-${index}`"
-              class="mb-1"
-            >
-              <label class="block">
-                <input
-                  v-model="values[field.name]"
-                  :value="option.value"
-                  class="mr-2 leading-tight"
-                  type="checkbox"
-                  :name="field.name"
-                  @change="checkValidate(field)"
-                />
-                <span class="text-sm"> {{ option.label }} </span>
-              </label>
-            </div>
-          </template>
+        <select
+          v-model="newItem.type"
+          id="type"
+          class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+        >
+          <option value="text">Text</option>
+          <option value="select">Select</option>
+          <option value="radio">Radio</option>
+          <option value="checkbox">Checkbox</option>
+          <option value="textarea">Textarea</option>
+        </select>
+      </div>
+      <div class="mb-6">
+        <div class="flex items-center ml-3 mr-6">
+          <input
+            v-model="newItem.required"
+            class="mr-2 leading-tight w-4 h-4 bg-gray-50 rounded border border-gray-300 focus:ring-3 focus:ring-blue-300 dark:bg-gray-700 dark:border-gray-600 dark:focus:ring-blue-600 dark:ring-offset-gray-800"
+            type="checkbox"
+          />
+          <span class="font-medium text-gray-900 dark:text-gray-300">
+            Required
+          </span>
+        </div>
+      </div>
+      <div class="mb-6">
+        <label
+          for="name"
+          class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-300"
+          >Title</label
+        >
+        <input
+          v-model="newItem.title"
+          type="text"
+          id="name"
+          class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+          placeholder="Name"
+        />
+      </div>
+      <div class="mb-6">
+        <label
+          for="name"
+          class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-300"
+          >Name</label
+        >
+        <input
+          v-model="newItem.name"
+          type="text"
+          id="name"
+          class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+          placeholder="Name"
+        />
+      </div>
 
-          <template v-if="field.type === 'radio'">
-            <div
-              v-for="(option, index) in field.options"
-              :key="`checkbox-${index}`"
-              class="mb-1"
-            >
-              <label class="block">
-                <input
-                  v-model="values[field.name]"
-                  :value="option.value"
-                  :name="field.name"
-                  class="mr-2 leading-tight"
-                  type="radio"
-                  @change="checkValidate(field)"
-                />
-                <span class="text-sm"> {{ option.label }} </span>
-              </label>
-            </div>
-          </template>
-
-          <template v-if="field.type === 'textarea'">
-            <textarea
-              v-model="values[field.name]"
-              :name="field.name"
-              cols="10"
-              rows="3"
-              :placeholder="field.placeholder"
-              class="border p-2 w-full focus:outline-none"
-              @input="checkValidate(field)"
-            ></textarea>
-          </template>
-
-          <div v-show="errors[field.name]" class="text-red-500 text-xs">
-            {{ errors[field.name] }}
+      <div class="mb-6">
+        <label
+          for="placeholder"
+          class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-300"
+          >Placeholder</label
+        >
+        <input
+          v-model="newItem.placeholder"
+          type="text"
+          id="placeholder"
+          class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+          placeholder="placeholder"
+        />
+      </div>
+      <div
+        v-if="['checkbox', 'radio', 'select'].includes(newItem.type)"
+        class="mb-6"
+      >
+        <label
+          for="option"
+          class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-300"
+        >
+          Option
+        </label>
+        <div
+          v-for="(option, index) in newItem.options"
+          :key="`new-option-${index}`"
+          class="flex"
+        >
+          <div class="flex items-center mb-3">
+            <label
+              class="mr-3 block text-sm font-medium text-gray-900 dark:text-gray-300"
+              >Label:
+            </label>
+            <input
+              v-model="option.label"
+              type="text"
+              class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-1/3 p-1 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+              placeholder="Label"
+            />
           </div>
+          <div class="flex items-center mb-3">
+            <label
+              class="mr-3 block text-sm font-medium text-gray-900 dark:text-gray-300"
+              >Value:
+            </label>
+            <input
+              v-model="option.value"
+              type="text"
+              id="option"
+              class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-1/3 p-1 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+              placeholder="Value"
+            />
+          </div>
+
+          <button
+            type="button"
+            class="text-red-700 hover:text-white border border-red-700 hover:bg-red-800 focus:ring-4 focus:outline-none focus:ring-red-300 font-medium rounded-lg text-sm px-2 py-2 text-center mr-2 mb-2 dark:border-red-500 dark:text-red-500 dark:hover:text-white dark:hover:bg-red-600 dark:focus:ring-red-900"
+            @click="deleteOption(index)"
+          >
+            <svg
+              class="w-4 h-4"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
+              ></path>
+            </svg>
+          </button>
+        </div>
+        <div class="flex justify-center items-center">
+          <button
+            type="button"
+            class="text-green-700 hover:text-white border border-green-700 hover:bg-green-800 focus:ring-4 focus:outline-none focus:ring-green-300 font-medium rounded-lg text-sm px-2 py-2 text-center dark:border-green-500 dark:text-green-500 dark:hover:text-white dark:hover:bg-green-600 dark:focus:ring-green-800"
+            @click="addOption"
+          >
+            <svg
+              class="w-4 h-4"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M12 6v6m0 0v6m0-6h6m-6 0H6"
+              ></path>
+            </svg>
+          </button>
         </div>
       </div>
 
-      <input
-        type="submit"
-        value="Submit"
-        class="w-full mt-6 bg-blue-600 hover:bg-blue-500 text-white font-semibold p-3"
-      />
-    </form>
-
-    <div class="container mx-auto">
-      SubmitData:
-      <pre>
-    {{ submitData }}
-  </pre
+      <button
+        @click="createField"
+        type="button"
+        class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
       >
+        Create
+      </button>
     </div>
-  </div>
+  </modal>
 </template>
 
 <script lang="ts">
   import { defineComponent } from 'vue'
+  import Contact from '../components/contact.vue'
+  import Modal from '../components/modal.vue'
 
   const initFields = [
     {
@@ -212,86 +347,59 @@
     },
   ]
 
+  const newItemBlank = {
+    type: '',
+    placeholder: '',
+    title: '',
+    required: false,
+    name: '',
+    options: [] as any,
+  }
+
   export default defineComponent({
-    name: 'Contact',
+    components: {
+      Contact,
+      Modal,
+    },
     setup() {
       return {}
     },
     data() {
       return {
         fields: JSON.parse(JSON.stringify(initFields)),
-        values: {} as any,
-        submitData: {},
-        errors: {} as any,
+        creating: false,
+        newItem: JSON.parse(JSON.stringify(newItemBlank)),
+        indexToInsert: -1,
       }
     },
-    computed: {},
-    mounted() {
-      this.values = this.setInitValue()
-    },
     methods: {
-      getClassField(type: string) {
-        if (type === 'textarea') return 'w-full'
-        return 'md:w-5/12'
+      deleteField(index: number) {
+        this.fields.splice(index, 1)
       },
-      submit(event: any) {
-        event.preventDefault()
-        const formData = new FormData(event.target)
-        const data = {} as any
-        for (let [key, val] of formData.entries()) {
-          Object.assign(data, { [key]: val })
-        }
-
-        for (let field of this.fields) {
-          this.checkValidate(field)
-        }
-
-        if (Object.keys(this.errors).length === 0) {
-          this.submitData = data
-        }
+      openCreate(index: number) {
+        this.indexToInsert = index
+        this.creating = true
       },
-      checkValidate(field: any) {
-        if (field.required) {
-          if (
-            typeof this.values[field.name] === 'undefined' ||
-            this.values[field.name] === '' ||
-            (field.type === 'checkbox' && this.values[field.name].length === 0)
-          ) {
-            this.errors[field.name] = `${field.name} is required`
-          } else {
-            delete this.errors[field.name]
-          }
+      createField() {
+        const newItem = JSON.parse(JSON.stringify(this.newItem))
+        if (['textarea', 'text'].includes(newItem.type)) {
+          delete newItem.options
         }
-
-        if (field.name === 'email' && this.values[field.name]) {
-          if (!validateEmail(this.values[field.name])) {
-            this.errors[field.name] = 'Invalid email address'
-          } else {
-            delete this.errors[field.name]
-          }
-        }
+        this.creating = false
+        this.fields.splice(this.indexToInsert, 0, newItem)
+        this.newItem = newItemBlank
       },
-      setInitValue() {
-        const fields = JSON.parse(JSON.stringify(this.fields))
-        let result = {} as any
-        for (let field of fields) {
-          if (field.type === 'checkbox') {
-            result[field.name] = []
-          }
-        }
-
-        return result
+      addOption() {
+        this.newItem.options.push({
+          label: '',
+          value: '',
+        })
+      },
+      deleteOption(index: number) {
+        this.newItem.options.splice(index, 1)
       },
     },
   })
-
-  const validateEmail = (email: string) => {
-    return String(email)
-      .toLowerCase()
-      .match(
-        /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
-      )
-  }
 </script>
 
-<style></style>
+<style scoped></style>
